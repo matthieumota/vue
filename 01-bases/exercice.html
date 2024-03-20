@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Vue JS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+  </head>
+  <body>
+    <div id="app">
+        <h1>{{ title }}</h1>
+        <ul v-if="shown">
+            <li v-for="recipe in recipes" :key="recipe.id">
+                <span @click="editing = recipe.id">{{ recipe.name }}</span>
+                <div v-if="editing === recipe.id">
+                    <input type="text" v-model="recipe.name">
+                    <button @click="editing = null">Fermer</button>
+                </div>
+            </li>
+        </ul>
+        <button @click="toggle">Afficher / Cacher la liste</button>
+    </div>
+
+    <script type="module">
+      import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      createApp({
+        setup() {
+          const title = 'Recettes';
+          const recipes = ref([
+            { id: 1, name: 'Couscous' },
+            { id: 2, name: 'Fondue' },
+            { id: 3, name: 'Salade César' },
+          ]);
+          const shown = ref(true);
+          const toggle = () => shown.value = !shown.value;
+          const editing = ref(null);
+
+          return { title, recipes, shown, toggle, editing };
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
