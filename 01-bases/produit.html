@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Vue JS</title>
+    <style>
+      [v-cloak] {
+        display: none;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        display: flex;
+        gap: 30px;
+      }
+
+      .w-50 {
+        width: 50%;
+      }
+
+      .green {
+        color: green;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .flex {
+        display: flex;
+        gap: 10px;
+      }
+
+      .square {
+        width: 50px;
+        height: 50px;
+        border: 2px solid transparent;
+        cursor: pointer;
+      }
+
+      .square.selected {
+        border-color: #000;
+      }
+
+      img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <div class="container">
+        <div class="w-50">
+          <img :src="selectedVariation.image" :alt="title">
+        </div>
+        <div class="w-50">
+          <h1>
+            {{ title }}
+            <span v-if="selected !== null"> - {{ selectedVariation.name }}</span>
+          </h1>
+          <p>{{ price }}</p>
+          <input type="number" v-model="quantity" :disabled="product.stock <= 0">
+
+          <p class="green" v-if="product.stock >= 1">En stock</p>
+          <p class="red" v-else>Pas de stock</p>
+
+          <ul>
+            <li v-for="feature in product.features">{{ feature }}</li>
+          </ul>
+
+          <div class="flex">
+            <div
+              v-for="(variation, index) in product.variations"
+              class="square"
+              :class="{ selected: index === selected }"
+              :style="{ backgroundColor: variation.color }"
+              :key="variation.color"
+              @click="choose(index)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createApp, ref, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      createApp({
+        setup() {
+          const product = ref({
+            name: 'Cat',
+            brand: 'Brand',
+            image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres',
+            price: 10,
+            stock: 345,
+            features: ['Mignon', 'Affectueux', 'Gourmand'],
+            variations: [
+              { name: 'Bleu', color: 'blue', image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres', price: 10 },
+              { name: 'Rouge', color: 'red', image: 'https://cdn-s-www.leprogres.fr/images/5DFD03BA-D491-47BC-8AAE-3D1AD1B7BBA2/NW_raw/comprendre-un-chat-n-est-pas-toujours-facile-illustration-adobe-stock-1691421526.jpg', price: 12 },
+            ],
+          });
+          const quantity = ref(1);
+          const selected = ref(null); // Variation sélectionnée
+
+          // Computed
+          const title = computed(() => `${product.value.brand} ${product.value.name}`);
+          const numberFormat = new Intl.NumberFormat('fr', { style: 'currency', currency: 'EUR' });
+          // const price = computed(() => numberFormat.format(product.value.price * quantity.value));
+
+          // Pour avoir le produit avec son prix / image normale ou avec variation
+          const selectedVariation = computed(() => {
+            if (selected.value !== null) {
+                return product.value.variations[selected.value];
+            }
+
+            return product.value;
+          });
+          const price = computed(() => numberFormat.format(selectedVariation.value.price * quantity.value));
+
+          // Methods
+          const choose = (index) => selected.value = index === selected.value ? null : index
+
+          // Watcher
+          watch(quantity, (newValue, oldValue) => {
+            if (newValue > product.value.stock) {
+              quantity.value = oldValue;
+              alert(`Il n'y a pas ${newValue} produits en stock.`);
+            }
+
+            if (newValue <= 0) {
+              quantity.value = 1;
+              alert(`Pas de stock négatif.`);
+            }
+          });
+
+          return { product, quantity, selected, title, price, selectedVariation, choose };
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
