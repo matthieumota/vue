@@ -61,9 +61,9 @@
             <span v-if="selected !== null"> - {{ selectedVariation.name }}</span>
           </h1>
           <p>{{ price }}</p>
-          <input type="number" v-model="quantity" :disabled="product.stock <= 0">
+          <input type="number" v-model="quantity" :disabled="selectedVariation.stock <= 0">
 
-          <p class="green" v-if="product.stock >= 1">En stock</p>
+          <p class="green" v-if="selectedVariation.stock >= 1">En stock</p>
           <p class="red" v-else>Pas de stock</p>
 
           <ul>
@@ -92,17 +92,17 @@
           const product = ref({
             name: 'Cat',
             brand: 'Brand',
-            image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres',
-            price: 10,
-            stock: 345,
+            // image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres',
+            // price: 10,
+            // stock: 345,
             features: ['Mignon', 'Affectueux', 'Gourmand'],
             variations: [
-              { name: 'Bleu', color: 'blue', image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres', price: 10 },
-              { name: 'Rouge', color: 'red', image: 'https://cdn-s-www.leprogres.fr/images/5DFD03BA-D491-47BC-8AAE-3D1AD1B7BBA2/NW_raw/comprendre-un-chat-n-est-pas-toujours-facile-illustration-adobe-stock-1691421526.jpg', price: 12 },
+              { name: 'Bleu', color: 'blue', image: 'https://img.20mn.fr/z8mxUA40R9WkuaIllQOGtSk/1200x768_les-chats-aiment-grimper-dans-les-arbres', price: 10, stock: 345 },
+              { name: 'Rouge', color: 'red', image: 'https://cdn-s-www.leprogres.fr/images/5DFD03BA-D491-47BC-8AAE-3D1AD1B7BBA2/NW_raw/comprendre-un-chat-n-est-pas-toujours-facile-illustration-adobe-stock-1691421526.jpg', price: 12, stock: 145 },
             ],
           });
           const quantity = ref(1);
-          const selected = ref(null); // Variation sélectionnée
+          const selected = ref(0); // Variation sélectionnée
 
           // Computed
           const title = computed(() => `${product.value.brand} ${product.value.name}`);
@@ -120,17 +120,17 @@
           const price = computed(() => numberFormat.format(selectedVariation.value.price * quantity.value));
 
           // Methods
-          const choose = (index) => selected.value = index === selected.value ? null : index
+          const choose = (index) => selected.value = index;
 
           // Watcher
           watch(quantity, (newValue, oldValue) => {
-            if (newValue > product.value.stock) {
-              quantity.value = oldValue;
+            if (newValue > selectedVariation.value.stock) {
+              quantity.value = selectedVariation.value.stock;
               alert(`Il n'y a pas ${newValue} produits en stock.`);
             }
 
             if (newValue <= 0) {
-              quantity.value = 1;
+              quantity.value = oldValue;
               alert(`Pas de stock négatif.`);
             }
           });
