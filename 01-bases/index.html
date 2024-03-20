@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Vue JS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="increment(-1)" :disabled="count <= 0">-</button>
+      <!-- Interpolation Mustache -->
+      <span :title="title" class="font-bold" :class="{ 'text-green-500': count >= 15 }">{{ count }}</span>
+      <button @click="increment(1)">+</button>
+
+      <p v-if="count >= 10">{{ title.toUpperCase() }}</p>
+      <div v-else>
+        <p>No</p>
+      </div>
+      <h1>{{ user.name }}</h1>
+      <input type="text" v-model="user.name">
+      <button @click="user = { name: 'Fiorella' }">Reset</button>
+      <button @click="reset">Reset</button>
+
+      <ul>
+        <li v-for="(contact, index) in contacts" :key="index" :class="{ 'uppercase': contacts.length >= 3 }">
+            {{ contact }}
+        </li>
+      </ul>
+
+      <input type="checkbox" id="c1" value="Toto" v-model="contacts">
+      <label for="c1">Toto</label>
+      <input type="checkbox" id="c2" value="Matthieu" v-model="contacts">
+      <label for="c2">Matthieu</label>
+
+      <ul>
+        <li v-for="car in cars" :key="car.id">
+            {{ car.name }}
+        </li>
+      </ul>
+
+      <input type="checkbox" v-model="enabled">
+      <button @click="toggle($event, 'toto')" :class="{ 'bg-blue-500': enabled }">
+        {{ enabled ? 'Fermer' : 'Ouvrir' }}
+      </button>
+    </div>
+
+    <script type="module">
+      import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+      createApp({
+        setup() {
+          const count = ref(0);
+          const user = ref({ name: 'Fiorella' });
+          const title = 'Mon titre';
+          const contacts = ref(['Matthieu', 'Marina']);
+          const cars = ref([
+            { id: 1, name: 'Renault' },
+            { id: 2, name: 'Peugeot' },
+          ]);
+          const enabled = ref(true);
+
+          const increment = (value) => {
+            count.value += value
+            user.value.name = 'Toto';
+          };
+          const reset = () => user.value = { name: 'Fiorella' };
+          const toggle = (event, name) => {
+            console.log(event);
+            enabled.value = !enabled.value;
+
+            if (enabled.value) {
+                setTimeout(() => enabled.value = false, 2000);
+            }
+          }
+
+          return { count, increment, title, user, reset, contacts, cars, enabled, toggle };
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
