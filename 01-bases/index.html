@@ -17,7 +17,7 @@
       <div v-else>
         <p>No</p>
       </div>
-      <h1>{{ user.name }}</h1>
+      <h1 :['title']="user.name" @['click']="user.name = 'click'">{{ user.name }}</h1>
       <input type="text" v-model="user.name">
       <button @click="user = { name: 'Fiorella' }">Reset</button>
       <button @click="reset">Reset</button>
@@ -25,8 +25,11 @@
       <ul>
         <li v-for="(contact, index) in contacts" :key="index" :class="{ 'uppercase': contacts.length >= 3 }">
             {{ contact }}
+            <input type="text" v-model="contacts[index]">
         </li>
       </ul>
+      <p>Noms qui commencent par M: {{ contactsBeginWithM.length }}</p>
+      <p>{{ contactsSummary }}</p>
 
       <input type="checkbox" id="c1" value="Toto" v-model="contacts">
       <label for="c1">Toto</label>
@@ -43,10 +46,20 @@
       <button @click="toggle($event, 'toto')" :class="{ 'bg-blue-500': enabled }">
         {{ enabled ? 'Fermer' : 'Ouvrir' }}
       </button>
+
+      <div>
+        <input type="text" v-model="message">
+        {{ message }} et l'inverse {{ reversedMessage }}
+      </div>
+
+      <input type="text" v-model="fullName">
+      <p>{{ fullName }}</p>
+      <p>Prénom: {{ firstname }}</p>
+      <p>Nom: {{ name }}</p>
     </div>
 
     <script type="module">
-      import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+      import { createApp, ref, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
       createApp({
         setup() {
@@ -59,7 +72,34 @@
             { id: 2, name: 'Peugeot' },
           ]);
           const enabled = ref(true);
+          const message = ref('Hello');
+          const name = ref('Mota');
+          const firstname = ref('Fiorella');
+          const fullName = computed({
+            get: () => `${firstname.value}${name.value ? ' ' + name.value : ''}`,
+            set: (value) => {
+              let names = value.split(' ');
 
+              firstname.value = names[0] ?? '';
+              name.value = names[1] ?? '';
+            },
+          });
+
+          // const reversedMessage = () => {
+          //  console.log('computed');
+          //  return message.value.split('').reverse().join('');
+          // };
+          const reversedMessage = computed(() => {
+            console.log('computed');
+            return message.value.split('').reverse().join('');
+          });
+          const contactsBeginWithM = computed(() => {
+            console.log('computed array');
+            return contacts.value.filter(c => c[0]?.toLowerCase() === 'm');
+          });
+          const contactsSummary = computed(() => {
+            return contactsBeginWithM.value.length + ' / 3';
+          })
           const increment = (value) => {
             count.value += value
             user.value.name = 'Toto';
@@ -69,12 +109,27 @@
             console.log(event);
             enabled.value = !enabled.value;
 
-            if (enabled.value) {
-                setTimeout(() => enabled.value = false, 2000);
-            }
+            // if (enabled.value) {
+            //     setTimeout(() => enabled.value = false, 2000);
+            // }
           }
 
-          return { count, increment, title, user, reset, contacts, cars, enabled, toggle };
+          // On surveille le changement de la ref enabled
+          watch(enabled, (newValue, oldValue) => {
+            if (newValue) {
+              setTimeout(() => enabled.value = false, 2000);
+            }
+          });
+
+          watch(() => contacts.value.length, (newLength, oldLength) => {
+            console.log(newLength, oldLength);
+          }, { immediate: true }); // Se fait au chargement
+
+          watch(contacts, (newValue) => {
+            console.log(newValue);
+          }, { deep: true }); // Surveille tous les changements du tableau
+
+          return { firstname, name, fullName, count, increment, title, user, reset, contacts, cars, enabled, toggle, message, reversedMessage, contactsBeginWithM, contactsSummary };
         },
       }).mount('#app');
     </script>
