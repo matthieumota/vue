@@ -1,5 +1,6 @@
 <script setup>
 import Button from '@/components/Button.vue'
+import Chrono from '@/components/Chrono.vue'
 import Counter from '@/components/Counter.vue'
 import Footer from '@/components/Footer.vue'
 import Navbar from '@/components/Navbar.vue'
@@ -20,6 +21,8 @@ const terms = ref([
   { name: 'Terme 2', definition: 'Définition terme 2' },
 ]);
 const totalTerms = computed(() => `${terms.value.length} terme${terms.value.length > 1 ? 's' : ''}`);
+const show1 = ref(true)
+const show2 = ref(false)
 </script>
 
 <template>
@@ -63,6 +66,15 @@ const totalTerms = computed(() => `${terms.value.length} terme${terms.value.leng
       <h2>Composant d'affichage I ({{ totalTerms }})</h2>
       <TermForm @saved="terms.push($event)" />
       <Term v-for="(term, index) in terms" :term="term" @deleted="terms.splice(index, 1)" />
+    <hr>
+  </div>
+
+  <div>
+    <hr>
+      <Chrono v-if="show1" />
+      <button @click="show1 = !show1">Afficher / Cacher</button>
+      <Chrono v-if="show2" />
+      <button @click="show2 = !show2">Afficher / Cacher</button>
     <hr>
   </div>
 
