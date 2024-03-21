@@ -1,4 +1,5 @@
 <script setup>
+import Button from '@/components/Button.vue'
 import Footer from '@/components/Footer.vue'
 import Navbar from '@/components/Navbar.vue'
 import UserForm from '@/components/UserForm.vue'
@@ -19,7 +20,16 @@ const author = ref({
   <UserForm v-model="author" />
   {{ JSON.stringify(author) }}
 
-  <Footer :title="title" @update-title="title = $event" />
+  <Button v-slot="{ test }">
+    Envoyer {{ test }}
+  </Button>
+  <Button>
+    <template #right>🤖</template>
+    Valider
+  </Button>
+  <Button />
+
+  <Footer :title="title" @update-title="title = $event" id="footer" />
 </template>
 
 <style scoped>

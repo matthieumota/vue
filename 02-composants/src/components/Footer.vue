@@ -9,7 +9,9 @@
 </script>
 
 <template>
-    <p @click="emit('updateTitle', 'Un nom')">
-        {{ title }} - {{ year }}
-    </p>
+    <div>
+        <p v-bind="$attrs" @click="emit('updateTitle', 'Un nom')">
+            {{ title }} - {{ year }}
+        </p>
+    </div>
 </template>

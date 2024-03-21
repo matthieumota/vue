@@ -1,6 +1,14 @@
 <script setup>
     import { computed } from 'vue';
 
+    // Depuis la version 3.4
+    const model = defineModel({
+        type: {
+            name: String,
+            firstname: String
+        },
+    });
+
     const props = defineProps(['modelValue']);
     const emit = defineEmits(['update:modelValue']);
 
