@@ -18,13 +18,19 @@
     }
 
     const search = ref('');
+    let lastSearch = search.value;
 
     const debounce = (func, timeout = 500) => {
         let timer;
 
         return () => {
             clearTimeout(timer)
-            timer = setTimeout(func, timeout)
+            if (lastSearch !== search.value) {
+                timer = setTimeout(() => {
+                    lastSearch = search.value;
+                    func();
+                }, timeout)
+            }
         }
     }
 
