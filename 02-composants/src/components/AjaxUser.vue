@@ -1,10 +1,25 @@
 <script setup>
-    import { computed } from 'vue';
+    import axios from 'axios';
+    import { onMounted, ref, watch } from 'vue';
 
-    const props = defineProps(['data']);
+    const props = defineProps(['id']);
 
-    const user = computed(() => props.data.user);
-    const loading = computed(() => props.data.loading);
+    const user = ref(null);
+    const loading = ref(true);
+
+    const fetchUser = () => {
+        loading.value = true;
+
+        axios.get(`https://jsonplaceholder.typicode.com/users/${props.id}`).then(response => {
+            user.value = response.data;
+        }).finally(() => setTimeout(() => loading.value = false, 500));
+    }
+
+    onMounted(fetchUser);
+
+    watch(() => props.id, () => {
+        fetchUser();
+    });
 </script>
 
 <template>

@@ -7,22 +7,14 @@
     const loading = ref(true);
     const hasError = ref(false);
 
-    const selected = ref({
-        loading: false,
-        user: null,
-    });
+    const selected = ref(null);
 
     const loadUser = (id) => {
-        if (selected.value.user && selected.value.user.id === id) {
-            return selected.value.user = null;
+        if (selected.value === id) {
+            return selected.value = null;
         }
 
-        selected.value.user = null;
-        selected.value.loading = true;
-
-        axios.get(`https://jsonplaceholder.typicode.com/users/${id}`).then(response => {
-            selected.value.user = response.data
-        }).finally(() => setTimeout(() => selected.value.loading = false, 500));
+        selected.value = id;
     }
 
     const search = ref('');
@@ -85,7 +77,7 @@
 
     <span v-if="loading">Chargement...</span>
 
-    <AjaxUser :data="selected" v-if="selected" />
+    <AjaxUser :id="selected" v-if="selected" />
 </template>
 
 <style scoped>
