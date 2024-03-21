@@ -1,4 +1,5 @@
 <script setup>
+import Ajax from '@/components/Ajax.vue'
 import Button from '@/components/Button.vue'
 import Chrono from '@/components/Chrono.vue'
 import Counter from '@/components/Counter.vue'
@@ -77,6 +78,8 @@ const show2 = ref(false)
       <button @click="show2 = !show2">Afficher / Cacher</button>
     <hr>
   </div>
+
+  <Ajax />
 
   <Footer :title="title" @update-title="title = $event" id="footer" />
 </template>
