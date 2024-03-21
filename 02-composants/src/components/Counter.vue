@@ -1,10 +1,13 @@
 <script setup>
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
 
     const props = defineProps(['start', 'max']);
     const emit = defineEmits(['increment']);
 
-    const count = ref(parseInt(props.start || 0));
+    const start = computed(() => parseInt(props.start || 0));
+    const hasMax = computed(() => props.max && count.value >= parseInt(props.max));
+
+    const count = ref(start.value);
 
     const increment = (step) => {
         count.value += step;
@@ -13,10 +16,10 @@
 </script>
 
 <template>
-    <div :class="{ max: count >= max }">
+    <div :class="{ max: hasMax }">
         <button @click="increment(-1)" v-if="count > 0">-</button>
         <span>{{ count }}</span>
-        <button @click="increment(1)" v-if="!max || count < max">+</button>
+        <button @click="increment(1)" v-if="!hasMax">+</button>
     </div>
 </template>
 
