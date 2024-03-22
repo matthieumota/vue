@@ -8,10 +8,13 @@
   const newTodo = ref('');
 
   const save = () => {
-    store.addTodo(newTodo.value);
-    newTodo.value = '';
+    store.addTodo(newTodo.value).then(() => {
+      newTodo.value = '';
 
-    router.push('/todos');
+      router.push('/todos');
+    }).catch(error => {
+      console.log(error);
+    });
   }
 </script>
 
