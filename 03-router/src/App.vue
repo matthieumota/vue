@@ -1,5 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { useCartStore } from '@/stores/cart';
+
+const cart = useCartStore();
 </script>
 
 <template>
@@ -9,6 +12,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/about">About</RouterLink>
       <RouterLink to="/hello/toto">Hello Toto</RouterLink>
     </nav>
+    <p>Panier: {{ cart.length }}</p>
   </header>
 
   <RouterView v-slot="{ Component, route }">
