@@ -4,7 +4,16 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import TodosView from '../views/TodosView.vue'
 import router from '@/router'
-import { nextTick } from 'vue'
+import axios from 'axios'
+
+// Mock axios car la requête réelle ne passera pas dans le test
+vi.mock('axios')
+axios.get.mockResolvedValue({
+  data: [
+    { id: 1, name: 'A', done: true },
+    { id: 2, name: 'B', done: false }
+  ],
+});
 
 describe('TodosView', () => {
   it('renders todos', async () => {
@@ -19,8 +28,10 @@ describe('TodosView', () => {
         ],
       },
     })
-    // await flushPromises();
-    // await nextTick();
+
+    // Permet de résoudre les promesses de manière instantanée (c'est cela qui provoquait l'erreur car dépendant du réseau)
+    await flushPromises();
+
     expect(wrapper.html()).toContain('A (1)')
 
     await wrapper.find('select').setValue(false)
