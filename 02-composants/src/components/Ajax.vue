@@ -19,22 +19,24 @@
 
     const search = ref('');
 
-    const debounce = (func, timeout = 500, ref) => {
+    const debounce = (func, timeout = 500, getCurrentValue) => {
         let timer;
-        let lastSearch = ref.value;
+        let lastValue = getCurrentValue();
 
         return () => {
             clearTimeout(timer)
-            if (lastSearch !== ref.value) {
+            let currentValue = getCurrentValue()
+
+            if (lastValue !== currentValue) {
                 timer = setTimeout(() => {
-                    lastSearch = ref.value;
+                    lastValue = currentValue;
                     func();
                 }, timeout)
             }
         }
     }
 
-    watch(search, debounce(() => fetchUsers(), 500, search));
+    watch(search, debounce(() => fetchUsers(), 500, () => search.value));
 
     const fetchUsers = () => {
         loading.value = true;
